@@ -950,7 +950,7 @@ func setPrivateRegistryPasswordIfNotExists(oldData, newData map[string]interface
 			continue
 		}
 		for _, oldConfig := range oldSlice {
-			if newConfig["url"] == oldConfig["url"] && newConfig["user"] == oldConfig["user"] &&
+			if isOldUrlEqualToNewUrl(newConfig, oldConfig) && newConfig["user"] == oldConfig["user"] &&
 				oldConfig["password"] != nil {
 				newConfig["password"] = oldConfig["password"]
 				break
@@ -1098,4 +1098,11 @@ func canUpgrade(nodes []*v3.Node, upgradeStrategy *rketypes.NodeUpgradeStrategy)
 			maxUnavailableWorker, workerOnlyNotReady, workerOnlyReady)
 	}
 	return nil
+}
+
+func isOldUrlEqualToNewUrl(newConfig map[string]interface{}, oldConfig map[string]interface{}) bool {
+	if (oldConfig["url"] == nil || oldConfig["url"] == "") && (newConfig["url"] == nil || newConfig["url"] == "") {
+		return true
+	}
+	return oldConfig["url"] == newConfig["url"]
 }
